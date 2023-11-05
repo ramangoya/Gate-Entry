@@ -63,7 +63,7 @@ textarea{
       </li>
     </ul>
     <form class="form-inline my-2 my-lg-0">
-        <input type="text" id="digital-clock" name="current_time">
+        <div id="digital-clock" name="current_time"></div>
     </form>
   </div>
 </nav>
@@ -88,7 +88,18 @@ while ($row=mysqli_fetch_assoc($result)) {
 	<input type="text" name="num" value="<?php  echo $row['conumber'];?>" readonly>
 
 	<label>Department</label>
-	<input type="text" name="dprt" value="<?php  echo strtoupper($row['department']);?>" readonly>
+  <?php
+  $did=$row["department"];
+
+$sql="SELECT name from  department where id='{$did}'";
+$result=mysqli_query($conn,$sql);
+while ($row=mysqli_fetch_assoc($result)) {
+
+  ?>
+	<input type="text" name="dprt" value="<?php  echo strtoupper( $row['name']);?>" readonly>
+  <?php
+}
+?>
 	<label>Reason</label><br>
 	<textarea name="reason"></textarea><br>
 	<input type="hidden" name="time" id="currentime" value="<?php echo $currentDateTime;?>">
@@ -100,10 +111,6 @@ while ($row=mysqli_fetch_assoc($result)) {
 </div>
 <?php }
 
-
-
-include 'database.php';
-
 $dept=array('ZOOLOGY DEPTT.', 'BOTANY DEPTT.', 'BIOTECH.', 'CHEMISTRY DEPTT.', 'MATHS DEPTT.', 'PHYSICS DEPTT.', 'HOME SC. DEPTT.', 'EDUCATION DEPTT.', 'MANAGEMENT', 'COMPUTER');
 
 if(isset($_POST["btn"]))
@@ -113,10 +120,24 @@ if(isset($_POST["btn"]))
   $d=$_POST['dprt'];
   $r=$_POST['reason'];
   $t=$_POST['current_time'];
+
   
 if (in_array($d, $dept))
 {
-echo "Matched";
+$csvFilePath = $d.".csv";
+$newData = [
+    [$n, $num, $d,$r,$t]];
+
+// CSV file path
+// Open the CSV file in append mode
+$csvFile = fopen($csvFilePath, 'a');
+foreach ($newData as $data) {
+    fputcsv($csvFile, $data);
+}
+
+// Close the CSV file
+fclose($csvFile);
+
 }
 else{
   echo "File Already Created";

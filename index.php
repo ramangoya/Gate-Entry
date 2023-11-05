@@ -71,7 +71,7 @@
       <form method="post">
   <div class="form-group">
     <label for="exampleInputEmail1">Enter Student Name</label>
-    <input type="text" class="form-control" name="name" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter Name">
+    <input type="text" class="form-control" name="name" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter email">
     
   </div>
  
@@ -92,7 +92,7 @@ include 'database.php';
 if(isset($_POST["btn"]))
 {
   $n=$_POST['name'];
-$sql="SELECT * from student where name='{$n}'";
+$sql="SELECT * from student where name LIKE '%$n%'";
 $result=mysqli_query($conn,$sql);
 while ($row=mysqli_fetch_assoc($result)) {
   
@@ -111,13 +111,20 @@ while ($row=mysqli_fetch_assoc($result)) {
   
   <a href="gate_entry.php">
 <div class="image">
-      <img src="demo.jpeg" width="100%">
+      <img src="Student_photo/<?php echo $row['photo']?>" width="50%">
 </div>
   
 <div class="data">
     <?php  echo $row["name"];?><br>
     <?php  echo $row["conumber"];?><br>
-    <?php  echo $row["department"];?><br> 
+    <?php  $did=$row["department"];
+
+$sql="SELECT name from  department where id='{$did}'";
+$result=mysqli_query($conn,$sql);
+while ($row=mysqli_fetch_assoc($result)) {
+  echo $row["name"];
+}
+  ?><br> 
     </div>
     
   </div>
